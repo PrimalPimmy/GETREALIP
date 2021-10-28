@@ -1,6 +1,8 @@
 {
-    "require": {
-        "monolog/monolog": "2.0.*",
-        "heroku/heroku-buildpack-php": "^199.0"
-    }
+  "require": {
+    "monolog/monolog": "2.0.*"
+  },
+  "require-dev": {
+    "heroku/heroku-buildpack-php": "^199.0"
+  }
 }
