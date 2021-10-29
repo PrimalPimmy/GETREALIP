@@ -1,38 +1,15 @@
-<?PHP
-
-function getUserIP()
-{
-    // Get real visitor IP behind CloudFlare network
-    if (isset($_SERVER["HTTP_CF_CONNECTING_IP"])) {
-              $_SERVER['REMOTE_ADDR'] = $_SERVER["HTTP_CF_CONNECTING_IP"];
-              $_SERVER['HTTP_CLIENT_IP'] = $_SERVER["HTTP_CF_CONNECTING_IP"];
+<?php
+function getUserIP() {
+    if( array_key_exists('HTTP_X_FORWARDED_FOR', $_SERVER) && !empty($_SERVER['HTTP_X_FORWARDED_FOR']) ) {
+        if (strpos($_SERVER['HTTP_X_FORWARDED_FOR'], ',')>0) {
+            $addr = explode(",",$_SERVER['HTTP_X_FORWARDED_FOR']);
+            echo trim($addr[0]);
+        } else {
+            echo $_SERVER['HTTP_X_FORWARDED_FOR'];
+        }
     }
-    $client  = @$_SERVER['HTTP_CLIENT_IP'];
-    $forward = @$_SERVER['HTTP_X_FORWARDED_FOR'];
-    $remote  = $_SERVER['REMOTE_ADDR'] ?? '127.0.0.1';
-
-    if(filter_var($client, FILTER_VALIDATE_IP))
-    {
-        $ip = $client;
+    else {
+        echo $_SERVER['REMOTE_ADDR'];
     }
-    elseif(filter_var($forward, FILTER_VALIDATE_IP))
-    {
-        $ip = $forward;
-    }
-    else
-    {
-        $ip = $remote;
-    }
-
-    return $ip;
 }
-
-
-$user_ip = getUserIP();
-
-echo $user_ip; // Output IP address [Ex: 177.87.193.134]
-
-
 ?>
-
-
