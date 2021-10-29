@@ -1,22 +1,38 @@
-<?php
-// from http://www.xpertdeveloper.com/2011/09/get-real-ip-address-using-php/
-if (!empty($_SERVER["HTTP_CLIENT_IP"]))
+<?PHP
+
+function getUserIP()
 {
- //check for ip from share internet
- $ip = $_SERVER["HTTP_CLIENT_IP"];
-}
-elseif (!empty($_SERVER["HTTP_X_FORWARDED_FOR"]))
-{
- // Check for the Proxy User
- $ip = $_SERVER["HTTP_X_FORWARDED_FOR"];
-}
-else
-{
- $ip = $_SERVER["REMOTE_ADDR"] ?? '127.0.1.1';
+    // Get real visitor IP behind CloudFlare network
+    if (isset($_SERVER["HTTP_CF_CONNECTING_IP"])) {
+              $_SERVER['REMOTE_ADDR'] = $_SERVER["HTTP_CF_CONNECTING_IP"];
+              $_SERVER['HTTP_CLIENT_IP'] = $_SERVER["HTTP_CF_CONNECTING_IP"];
+    }
+    $client  = @$_SERVER['HTTP_CLIENT_IP'];
+    $forward = @$_SERVER['HTTP_X_FORWARDED_FOR'];
+    $remote  = $_SERVER['REMOTE_ADDR'] ?? '127.0.0.1';
+
+    if(filter_var($client, FILTER_VALIDATE_IP))
+    {
+        $ip = $client;
+    }
+    elseif(filter_var($forward, FILTER_VALIDATE_IP))
+    {
+        $ip = $forward;
+    }
+    else
+    {
+        $ip = $remote;
+    }
+
+    return $ip;
 }
 
-// This will print user's real IP Address
-// does't matter if user using proxy or not.
-echo $ip;
+
+$user_ip = getUserIP();
+
+echo $user_ip; // Output IP address [Ex: 177.87.193.134]
+
+
 ?>
+
 
